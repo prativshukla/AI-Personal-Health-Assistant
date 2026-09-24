@@ -1,3 +1,4 @@
+import html
 from pathlib import Path
 
 import pandas as pd
@@ -55,6 +56,19 @@ html,body,[class*="css"]{font-family:Inter,system-ui,sans-serif}
 .stButton>button{min-height:45px!important;border-radius:13px!important;font-weight:750!important;border:1px solid #dce6ee!important;background:#fff!important;color:var(--ink)!important;box-shadow:0 5px 18px rgba(16,35,63,.05)!important;transition:transform .15s,box-shadow .15s!important}.stButton>button:hover{transform:translateY(-1px);box-shadow:0 9px 24px rgba(16,35,63,.10)!important}.stButton>button[kind="primary"]{border:0!important;background:linear-gradient(135deg,#0f766e,#16b8a6)!important;color:white!important}
 div[data-baseweb="select"]>div{border-radius:13px!important;border-color:#dce6ee!important;background:#fff!important}.stTextInput input{border-radius:13px!important}.stFileUploader>section{border-radius:15px!important;border:1.5px dashed #b8c9d9!important;background:#fbfdff!important}.stProgress>div>div{background:linear-gradient(90deg,#0f766e,#16b8a6)}
 [data-testid="stMetric"]{background:#fff;border:1px solid var(--line);padding:15px;border-radius:16px}.smallMuted{font-size:12px;color:var(--muted)}
+/* --- UI fixes --- */
+.hero h1{color:#fff!important}.hero p{color:#d9faf6!important}.hero{color:#fff}
+[data-testid="stBaseButton-secondary"],[data-testid="stBaseButton-secondaryFormSubmit"]{min-height:45px;border-radius:13px;font-weight:700;border:1px solid #dce6ee;background:#fff;color:var(--ink);box-shadow:0 5px 18px rgba(16,35,63,.05)}
+[data-testid="stBaseButton-primary"],[data-testid="stBaseButton-primaryFormSubmit"]{min-height:48px;border-radius:13px;font-weight:700;border:0;background:linear-gradient(135deg,#0f766e,#16b8a6);color:#fff;box-shadow:0 8px 22px rgba(15,118,110,.28);transition:transform .15s,filter .15s}
+[data-testid="stBaseButton-primary"] p,[data-testid="stBaseButton-primaryFormSubmit"] p{color:#fff!important}
+[data-testid="stBaseButton-primary"]:hover,[data-testid="stBaseButton-primaryFormSubmit"]:hover{filter:brightness(1.06);transform:translateY(-1px)}
+[data-testid="stForm"]{background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:19px;padding:22px;box-shadow:0 10px 32px rgba(16,35,63,.055)}
+[data-testid="stSidebar"] .stRadio [role="radiogroup"]{gap:4px}
+[data-testid="stSidebar"] .stRadio label{width:100%;border:1px solid transparent;cursor:pointer}
+[data-testid="stSidebar"] .stRadio label>div:first-child{display:none}
+[data-testid="stSidebar"] .stRadio label:has(input:checked){background:linear-gradient(135deg,rgba(22,184,166,.30),rgba(37,99,235,.24));border-color:rgba(255,255,255,.16);font-weight:700}
+[data-testid="stFileUploader"] section{padding:22px}
+@media(max-width:800px){[data-testid="stForm"]{padding:14px}.card.result{padding:18px}.resultValue{font-size:23px}}
 @media(max-width:800px){.block-container{padding:1rem}.title{font-size:29px}.hero{padding:25px}.hero h1{font-size:29px}.feature{min-height:0}}
 </style>
 """,
@@ -240,12 +254,12 @@ if module == "Symptoms Checker":
 
     if st.session_state.symptom_result:
         disease, confidence, description, precautions = st.session_state.symptom_result
-        st.markdown(f'<div class="card result"><div class="resultLabel">Model result</div><div class="resultValue">{disease}</div><div class="confidence">Confidence · {confidence:.1%}</div><div class="bar"><div style="width:{max(4,confidence*100):.1f}%"></div></div></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="card result"><div class="resultLabel">Model result</div><div class="resultValue">{html.escape(str(disease))}</div><div class="confidence">Confidence · {confidence:.1%}</div><div class="bar"><div style="width:{max(4,confidence*100):.1f}%"></div></div></div>', unsafe_allow_html=True)
         l,r = st.columns(2, gap="medium")
         with l:
-            st.markdown(f'<div class="card panel"><div class="section">Description</div>{description}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="card panel"><div class="section">Description</div>{html.escape(str(description))}</div>', unsafe_allow_html=True)
         with r:
-            items = "".join(f"<li>{x}</li>" for x in precautions) if precautions else "<li>No precaution listed in the dataset.</li>"
+            items = "".join(f"<li>{html.escape(str(x))}</li>" for x in precautions) if precautions else "<li>No precaution listed in the dataset.</li>"
             st.markdown(f'<div class="card panel"><div class="section">Dataset precautions</div><ul style="color:#66768a;font-size:13px;line-height:1.7">{items}</ul></div>', unsafe_allow_html=True)
         if st.button("Clear result", key="clear_symptoms"):
             st.session_state.symptom_result = None
@@ -292,13 +306,13 @@ def render_image_module(kind):
                         codes = ["bkl","nv","df","mel","vasc","bcc","akiec"]
                         names = {"bkl":"Benign keratosis-like lesions","nv":"Melanocytic nevi","df":"Dermatofibroma","mel":"Melanoma","vasc":"Vascular lesions","bcc":"Basal cell carcinoma","akiec":"Actinic keratoses / intraepithelial carcinoma"}
                         label = names[codes[index]]
-                    st.session_state[state_key] = (label, confidence)
+                    st.session_state[state_key] = (label, confidence, uploaded.name)
                 except Exception as exc:
                     st.error(f"Could not run the model: {exc}")
 
             result = st.session_state.get(state_key)
-            if result:
-                label, confidence = result
+            if result and result[2] == uploaded.name:
+                label, confidence, _ = result
                 accent = "#dc2626" if is_xray and label == "PNEUMONIA" else "#0f766e"
                 st.markdown(f'<div class="card result"><div class="resultLabel">Prediction</div><div class="resultValue" style="color:{accent}">{label}</div><div class="confidence">Model confidence · {confidence:.1%}</div><div class="bar"><div style="width:{max(4,confidence*100):.1f}%;background:{accent}"></div></div></div>', unsafe_allow_html=True)
                 if st.button("Clear result", key=f"clear_{kind}"):
@@ -312,5 +326,5 @@ def render_image_module(kind):
 
 if module == "Chest X-ray":
     render_image_module("xray")
-else:
+elif module == "Skin Lesion":
     render_image_module("skin")
