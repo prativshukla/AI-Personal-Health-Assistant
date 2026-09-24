@@ -12,12 +12,12 @@ if ! command -v git-lfs >/dev/null 2>&1; then
   exit 1
 fi
 
-read -p "GitHub repository URL (e.g. https://github.com/user/AI-Personal-Health-Assistant.git): " REPO
+read -p "GitHub repository URL (e.g. https://github.com/user/HealthAI.git): " REPO
 
 git lfs install
 git init
 git add .
-git commit -m "Prepare AI Personal Health Assistant for Streamlit Cloud" || true
+git commit -m "Prepare HealthAI for Streamlit Cloud" || true
 git branch -M main
 git remote remove origin 2>/dev/null || true
 git remote add origin "$REPO"

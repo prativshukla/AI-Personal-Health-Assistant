@@ -28,5 +28,5 @@ source .venv/bin/activate
 python -m pip install --upgrade pip setuptools wheel
 python -m pip install -r requirements.txt
 
-echo "Starting AI Personal Health Assistant..."
+echo "Starting HealthAI..."
 python -m streamlit run app.py

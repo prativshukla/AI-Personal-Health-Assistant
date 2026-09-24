@@ -6,7 +6,7 @@ This project is prepared for Streamlit Community Cloud.
 
 Create an empty repository named, for example:
 
-`AI-Personal-Health-Assistant`
+`HealthAI`
 
 ## 2. Upload with Git + Git LFS (recommended)
 
@@ -15,14 +15,14 @@ The two `.pth` model files are about 43 MB each. GitHub blocks individual files 
 On Mac:
 
 ```bash
-cd /path/to/AI-Personal-Health-Assistant-main
+cd /path/to/HealthAI
 brew install git-lfs
 git lfs install
 git init
 git add .
-git commit -m "Prepare AI Personal Health Assistant for Streamlit Cloud"
+git commit -m "Prepare HealthAI for Streamlit Cloud"
 git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/AI-Personal-Health-Assistant.git
+git remote add origin https://github.com/YOUR_USERNAME/HealthAI.git
 git push -u origin main
 ```
 
@@ -34,7 +34,7 @@ Open Streamlit Community Cloud and choose **Create app**.
 
 Select:
 
-- Repository: `YOUR_USERNAME/AI-Personal-Health-Assistant`
+- Repository: `YOUR_USERNAME/HealthAI`
 - Branch: `main`
 - Main file path: `app.py`
 

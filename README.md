@@ -1,4 +1,4 @@
-# AI Personal Health Assistant
+# HealthAI
 
 A local Streamlit demo containing:
 
